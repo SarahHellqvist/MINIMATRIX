@@ -61,8 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24029d4e945b8c54a95ee290d570de97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSprite: {fileID: 21300000, guid: af532e91900ca564f98eacd12eb32849, type: 3}
-  aISprite: {fileID: 21300000, guid: 36879db6e9c922c47b74a9e01caf5147, type: 3}
+  playerSprite: {fileID: 21300000, guid: 6b6864e1e2353bf4483555e20d4c42a5, type: 3}
+  aISprite: {fileID: 21300000, guid: 9a887bfa64c1d2f4eb61c8d7ac4ecae0, type: 3}
 --- !u!212 &1564057998158164675
 SpriteRenderer:
   m_ObjectHideFlags: 0
