@@ -428,6 +428,15 @@ public class GameManager : MonoBehaviour
             Debug.Log("AI Revolution is starting");
     }
 
+    public void Restart()
+    {
+        foreach (Tile tile in board)
+        {
+            turn = 0;
+            tile.ResetTile();
+        }
+    }
+
     private bool CheckIfOutOfBounds(int x, int y)
     {
         return !(x < 0 || x >= columns || y < 0 || y >= rows);

@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour
     private GameManager gm;
     private SpriteRenderer sr;
     [SerializeField]
-    private Sprite playerSprite, aISprite;
+    private Sprite emptySprite, playerSprite, aISprite;
     public TileData data;
     [SerializeField]
     private Text text;
@@ -43,6 +43,13 @@ public class Tile : MonoBehaviour
             gm.PlaceTileInColumn(data.x, TileType.player);
             //Debug.Log("Released in Column: " + (x+1) + ", x: " + x + "; y:" + y);
         }
+    }
+
+    public void ResetTile()
+    {
+        data.type = TileType.empty;
+        sr.sprite = emptySprite;
+        IsUseable = true;
     }
 
     public void TurnIntoPlayerTile()
