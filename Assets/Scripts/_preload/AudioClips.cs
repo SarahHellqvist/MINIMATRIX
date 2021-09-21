@@ -3,14 +3,15 @@ using UnityEngine;
 public class AudioClips : MonoBehaviour
 {
     [SerializeField]
+    AudioSource audioSource;
+
+    [SerializeField]
     AudioClip playerTileSound;
     [SerializeField]
     AudioClip aITileSound;
     [SerializeField]
     AudioClip PlayerWinSound;
 
-    [SerializeField]
-    AudioSource audioSource;
 
     private void Awake()
     {

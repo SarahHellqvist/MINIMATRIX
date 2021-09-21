@@ -68,6 +68,8 @@ public class GameManager : MonoBehaviour
 
         if (type == TileType.player)
             Sound.Instance.AudioClips.PlayPlayerSound();
+        else if (type == TileType.ai)
+            Sound.Instance.AudioClips.PlayAISound();
 
         for (int y = 0; y < rows; y++)
         { //turns the first available tile in the given column to the type given
@@ -427,7 +429,10 @@ public class GameManager : MonoBehaviour
             tile.IsUseable = false;
         //Debug.Log(StaticEvaluationOfBoard(board));
         if (IsPlayerTurn())
+        {
             Debug.Log("Player Won!");
+            Sound.Instance.AudioClips.PlayPlayerWinSound();
+        }
         else
             Debug.Log("AI Revolution is starting");
     }
