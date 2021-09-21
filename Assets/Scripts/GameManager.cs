@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         }
 
         if (type == TileType.player)
-            Sound.Instance.AudioClips.PlayPlayerSound(Sound.Instance.Audio);
+            Sound.Instance.AudioClips.PlayPlayerSound();
 
         for (int y = 0; y < rows; y++)
         { //turns the first available tile in the given column to the type given

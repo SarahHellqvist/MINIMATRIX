@@ -6,14 +6,30 @@ public class AudioClips : MonoBehaviour
     AudioClip playerTileSound;
     [SerializeField]
     AudioClip aITileSound;
+    [SerializeField]
+    AudioClip PlayerWinSound;
 
-    public void PlayPlayerSound(AudioSource source)
+    [SerializeField]
+    AudioSource audioSource;
+
+    private void Awake()
     {
-        source.PlayOneShot(playerTileSound);
+        if (audioSource == null)
+            audioSource = Sound.Instance.Audio;
     }
 
-    public void PlayAISound(AudioSource source)
+    public void PlayPlayerSound()
     {
-        source.PlayOneShot(aITileSound);
+        audioSource.PlayOneShot(playerTileSound);
+    }
+
+    public void PlayAISound()
+    {
+        audioSource.PlayOneShot(aITileSound);
+    }
+
+    public void PlayPlayerWinSound()
+    {
+        audioSource.PlayOneShot(PlayerWinSound);
     }
 }

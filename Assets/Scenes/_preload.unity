@@ -300,5 +300,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 770e54fd5940c9345a0aa81168bcd102, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerTileSound: {fileID: 8300000, guid: 6ec0e245cb2825747833008f24b66725, type: 3}
-  aITileSound: {fileID: 0}
+  playerTileSound: {fileID: 8300000, guid: 7a7b56bd398a7c0439ba75a5edad8602, type: 3}
+  aITileSound: {fileID: 8300000, guid: 91c8dba31c975da4682078139bb0d201, type: 3}
