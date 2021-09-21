@@ -127,9 +127,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator AITilePlaceDelay(int col, float time)
     {
-        Debug.Log("Waiting");
         yield return new WaitForSeconds(time);
-        Debug.Log("Done");
         PlaceTileInColumn(col, TileType.ai);
     }
 
