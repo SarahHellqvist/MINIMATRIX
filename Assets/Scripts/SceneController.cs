@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,17 +6,17 @@ public class SceneController : MonoBehaviour
     public GameObject Panel;
     public void StartMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void ConnectGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(2);
     }
 
     public void ChessGame()
     {
-        SceneManager.LoadScene(2);
+        SceneManager.LoadScene(3);
     }   
 
     public void OpenPanel()
