@@ -29,4 +29,12 @@ public class SceneController : MonoBehaviour
             Panel.SetActive(!isActive);
         }
     }
+
+    public void ClosePanel()
+    {
+        if (Panel != null)
+        {
+            Panel.SetActive(false);
+        }
+    }
 }
