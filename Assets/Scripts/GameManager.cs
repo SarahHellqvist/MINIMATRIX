@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
     private Tile[,] board;
 
+    private bool debugMode = false;
+
     void Awake()
     {
         GenerateBoard();
@@ -83,11 +85,14 @@ public class GameManager : MonoBehaviour
 
     private void AITurn()
     {
-        ClearDebugValues();
+        if (debugMode)
+            ClearDebugValues();
 
         Dictionary<TileData, int> map = MiniMaxMap();
 
-        DebugTileValues(map);
+        if (debugMode)
+            DebugTileValues(map);
+
         TileData data = new TileData();
         int colValue = int.MinValue;
 
@@ -360,8 +365,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("All Values are the same");
             if (EarlyGame())
                 return 3;
-            else
-                return Random.Range(0, map.Count);
+            //else
+                //return Random.Range(0, map.Count);
         }
         return -1;
     }
@@ -454,6 +459,12 @@ public class GameManager : MonoBehaviour
             }
             Debug.Log(wholeRow);
         }
+    }
+
+    public void ActivateDebugMode(bool b)
+    {
+        Debug.Log("Debug = " + b);
+        debugMode = b;
     }
 
     private bool EarlyGame()
