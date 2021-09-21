@@ -1,15 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Hover : MonoBehaviour
+public class Hover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public GameObject go;
-    public void OnMouseEnter() { 
-    
+
+    private void Start()
+    {
+        go.SetActive(false);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
         go.SetActive(true);
     }
-    public void OnMouseExit()
+
+    public void OnPointerExit(PointerEventData eventData)
     {
         go.SetActive(false);
     }
