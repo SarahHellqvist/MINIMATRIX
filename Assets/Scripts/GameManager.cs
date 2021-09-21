@@ -467,6 +467,23 @@ public class GameManager : MonoBehaviour
         debugMode = b;
     }
 
+    public void UpdateDifficulty(float f)
+    {
+        Debug.Log("Difficulty = " + f);
+        switch (f)
+        {
+            case 1:
+                depth = 4;
+                break;
+            case 2:
+                depth = 6;
+                break;
+            case 3:
+                depth = 8;
+                break;
+        }
+    }
+
     private bool EarlyGame()
     {
         return turn < 6;
