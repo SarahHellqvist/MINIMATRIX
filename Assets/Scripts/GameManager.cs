@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +12,10 @@ public class GameManager : MonoBehaviour
     private int tilesToWin = 4;
 
     [Header("AI Settings"), SerializeField,
-        Range(1, 10), Tooltip("Difficulty setting")]
-    private int depth = 3;
+        Range(1, 8), Tooltip("Difficulty setting")]
+    private int depth = 4;
+    [SerializeField, Range(0.0f, 1.0f), Tooltip("The time it takes for the AI to place the tile after calculations")]
+    private float tilePlacementDelay = 0.7f;
     [SerializeField]
     private bool aIGoesFirst;
 
@@ -21,7 +24,7 @@ public class GameManager : MonoBehaviour
     private Tile[,] board;
 
     void Awake()
-    { 
+    {
         GenerateBoard();
     }
 
@@ -52,29 +55,6 @@ public class GameManager : MonoBehaviour
             AITurn();
         }
     }
-    
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-            GetBoardWithAFewChanges();
-        if (Input.GetKeyDown(KeyCode.F))
-            GetBoardDataWithAFewChanges();
-        if (Input.GetKeyDown(KeyCode.R))
-            DoQuickWinCheck();
-    }
-
-    void DoQuickWinCheck() 
-    {
-        TileData data = new TileData();
-        data.x = 5;
-        data.y = 0;
-        PrintBoard(board);
-        PrintBoard(GetPotentialBoard(GetBoardData(), data, TileType.player));
-        if (CheckWin(GetPotentialBoard(GetBoardData(), data, TileType.player)))
-            Debug.Log("Player Would Win");
-        else
-            Debug.Log("not win con");
-    }
 
     public void PlaceTileInColumn(int col, TileType type)
     {
@@ -91,7 +71,7 @@ public class GameManager : MonoBehaviour
             break;
         }
         //PrintBoard(board);
-        if (CheckWin(GetBoardData()))
+        if (CheckWin(GetBoardData(), tilesToWin))
         {
             GameOver();
             return;
@@ -103,11 +83,23 @@ public class GameManager : MonoBehaviour
 
     private void AITurn()
     {
-        //int score = MiniMax(GetBoardData(), depth, int.MinValue, int.MaxValue, true);
+        ClearDebugValues();
 
         Dictionary<TileData, int> map = MiniMaxMap();
+
+        DebugTileValues(map);
         TileData data = new TileData();
         int colValue = int.MinValue;
+
+        //om flera värden är samma så lägg centralt
+
+        int col = DealWithEqualValueCase(map);
+        if (col != -1)
+        {
+            StartCoroutine(AITilePlaceDelay(col, tilePlacementDelay));
+            return;
+        }
+
         foreach (TileData d in map.Keys)
         {
             Debug.Log(d.x + ", " + d.y + " value: " + map[d]);
@@ -117,21 +109,43 @@ public class GameManager : MonoBehaviour
                 data = d;
             }
         }
-        PlaceTileInColumn(data.x, TileType.ai);
+        data = PrioritizeCentralPosition(map);
 
-        //Debug.Log(score);
-        //int col = ChoseColumnBasedOnScore(score);
-        //PlaceTileInColumn(col, TileType.ai);
-        //PlaceTileInColumn(UnityEngine.Random.Range(0, possibleMoves.Count), TileType.ai);
-        //Debug.Log(MiniMax(GetBoardData(), depth, int.MinValue, int.MaxValue, true));
+        StartCoroutine(AITilePlaceDelay(data.x, tilePlacementDelay));
+    }
+
+    IEnumerator AITilePlaceDelay(int col, float time)
+    {
+        Debug.Log("Waiting");
+        yield return new WaitForSeconds(time);
+        Debug.Log("Done");
+        PlaceTileInColumn(col, TileType.ai);
+    }
+
+    private void ClearDebugValues()
+    {
+        foreach (Tile tile in board)
+        {
+            tile.ClearDebugText();
+        }
+    }
+
+    private void DebugTileValues(Dictionary<TileData, int> map)
+    {
+        List<TileData> tileData = new List<TileData>(map.Keys);
+        foreach (TileData td in tileData)
+        {
+            board[td.x, td.y].SetDebugText(map[td]);
+        }
+
     }
 
     private int MiniMax(TileData[,] boardParent, int depth, int alpha, int beta, bool maximizingPlayer)
     {
         //Debug.Log("Ran minimax");
-        if (depth == 0 || CheckWin(boardParent))
+        if (depth == 0 || CheckWin(boardParent, tilesToWin))
         {
-            return StaticEvaluationOfBoard(boardParent); //ska ge ett värde för board state, inte tile placement
+            return StaticEvaluationOfBoard(boardParent, maximizingPlayer);
         }
 
         List<TileData> possibleMoves = GetPossibleMovesInBoardState(boardParent);
@@ -164,11 +178,11 @@ public class GameManager : MonoBehaviour
             return minEval;
         }
     }
-    
+
     private Dictionary<TileData, int> MiniMaxMap()
-    { 
+    {
         Dictionary<TileData, int> map = new Dictionary<TileData, int>();
-        
+
         List<TileData> possibleMoves = GetPossibleMovesInBoardState(GetBoardData());
         foreach (TileData tile in possibleMoves)
         {
@@ -179,69 +193,28 @@ public class GameManager : MonoBehaviour
         return map;
     }
 
-    private int StaticEvaluationOfBoard(TileData[,] board)
+    private int StaticEvaluationOfBoard(TileData[,] b, bool maximizingPlayer)
     {
         int score = 0;
-        List<TileData> possibleMoves = GetPossibleMovesInBoardState(board);
+        List<TileData> possibleMoves = GetPossibleMovesInBoardState(b);
         foreach (TileData tile in possibleMoves)
         {
-            if (IsPlayerTurn())
+            if (!maximizingPlayer)
             {
-                if (CheckWin(GetPotentialBoard(board, tile, TileType.player)))
+                if (CheckWin(GetPotentialBoard(b, tile, TileType.player), tilesToWin))
                     score += 1000;
+                if (CheckWin(GetPotentialBoard(b, tile, TileType.player), tilesToWin - 1)) //3 i rad är inte lika värdefullt om det inte finns en tillgänglig fjärde plats
+                    score += 100;
             }
             else
             {
-                if (CheckWin(GetPotentialBoard(board, tile, TileType.ai)))
+                if (CheckWin(GetPotentialBoard(b, tile, TileType.ai), tilesToWin))
                     score -= 1000;
-            }
-
-            //else
-            //{
-            //    if (depth % 2 != 0)
-            //        score += 1;
-            //    else
-            //        score -= 1;
-            //}
-        }
-        //if (CheckWin(board) && IsPlayerTurn())
-        //    score += 1000;
-        //else if (CheckWin(board) && !IsPlayerTurn())
-        //    score -= 1000;
-
-        //mer value som mitten column osv
-
-        return score;
-    }
-    
-    private int StaticMapEvaluationOfBoard(TileData[,] board)
-    {
-        int score = 0;
-        List<TileData> possibleMoves = GetPossibleMovesInBoardState(board);
-        foreach (TileData tile in possibleMoves)
-        {
-            if (IsPlayerTurn())
-            {
-                if (CheckWin(GetPotentialBoard(board, tile, TileType.player)))
-                    score += 1000;
-                else
-                    score += 1;
-            }
-            else
-            {
-                if (CheckWin(GetPotentialBoard(board, tile, TileType.ai)))
-                    score -= 1000;
-                else score -= 1;
+                if (CheckWin(GetPotentialBoard(b, tile, TileType.player), tilesToWin - 1))
+                    score -= 100;
             }
         }
         return score;
-    }
-
-    private int ChoseColumnBasedOnScore(int score)
-    {
-        int col = 3;
-
-        return col;
     }
 
     private List<TileData> GetPossibleMovesInBoardState(TileData[,] board)
@@ -251,7 +224,7 @@ public class GameManager : MonoBehaviour
         {
             for (int y = 0; y < rows; y++)
             {
-                if (board[x, y].type == TileType.empty) 
+                if (board[x, y].type == TileType.empty)
                 {
                     possibleMoves.Add(board[x, y]);
                     break;
@@ -261,17 +234,6 @@ public class GameManager : MonoBehaviour
         return possibleMoves;
     }
 
-    /*private List<Tile[,]> SimulatePossibleBoardStates(Tile[,] boardParent, TileType tileType) //list of possible board states based on possible moves
-    {
-        List<Tile[,]> b = new List<Tile[,]>();
-        List<Tile> possibleMoves = GetPossibleMovesInBoardState(boardParent);
-        foreach (Tile tile in possibleMoves)
-        {
-            b.Add(GetPotentialBoard(boardParent, tile, tileType));
-        }
-        return b;
-    }*/
-
     private TileData[,] GetPotentialBoard(TileData[,] boardParent, TileData tile, TileType tileType)
     {
         TileData[,] clone = GetDeepCopyOfBoard(boardParent);
@@ -280,35 +242,10 @@ public class GameManager : MonoBehaviour
         return clone;
     }
 
-    /*private TileData[,] GetCopyOfBoard(TileData[,] b)
-    {
-        TileData[,] copy = new TileData[columns, rows];
-        TileData tileData;
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                tileData = new TileData();
-                tileData.x = b[x, y].x;
-                tileData.y = b[x, y].y;
-                tileData.type = b[x, y].type;
-            }
-        }
-        return copy;
-    }*/
-
-    private TileData[,] GetDeepCopyOfBoard(TileData[,] b) //return a deep copy of the board given
+    private TileData[,] GetDeepCopyOfBoard(TileData[,] b) //return a deep copy of the board given https://docs.microsoft.com/en-us/dotnet/api/system.array.clone?view=net-5.0
     {
         return b.Clone() as TileData[,];
     }
-
-    /*private int[,] GetIntCopyOfBoard(int[,] b)
-    {
-        int[,] copy = b.Clone() as int[,];
-        //int[,] copy = (int[,])b.Clone();
-
-        return copy;
-    }*/
 
     private TileData[,] GetBoardData() //return the actual board state in TileData[,] form
     {
@@ -328,36 +265,23 @@ public class GameManager : MonoBehaviour
         return dataBoard;
     }
 
-    /*private int[,] GetBoardAsInt(Tile[,] board) //returns int version of the board https://docs.microsoft.com/en-us/dotnet/api/system.array.clone?view=net-5.0
-    {
-        int[,] newBoard = new int[columns, rows];
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                newBoard[x, y] = board[x, y].GetTypeAsInt();
-            }
-        }
-        return newBoard;
-    }*/
-
-    private bool CheckWin(TileData[,] b)
+    private bool CheckWin(TileData[,] b, int inARow)
     {
         foreach (TileData tile in b)
         {
             if (tile.type != TileType.empty)
             {
-                if (CheckWin(b, tile))
+                if (CheckWin(b, tile, inARow))
                     return true;
             }
         }
         return false;
     }
 
-    private bool CheckWin(TileData[,] b, TileData tile)
+    private bool CheckWin(TileData[,] b, TileData tile, int inARow)
     {
         int tilesInARow = 0;
-        for (int x = -(tilesToWin - 1); x < (tilesToWin - 1); x++)
+        for (int x = -(inARow - 1); x < (inARow - 1); x++)
         {
             if (CheckIfOutOfBounds(tile.x + x, tile.y))
             {
@@ -366,11 +290,11 @@ public class GameManager : MonoBehaviour
                 else
                     tilesInARow = 0;
             }
-            if (tilesInARow == tilesToWin)
+            if (tilesInARow == inARow)
                 return true;
         }
         tilesInARow = 0;
-        for (int y = -(tilesToWin - 1); y < (tilesToWin - 1); y++)
+        for (int y = -(inARow - 1); y < (inARow - 1); y++)
         {
             if (CheckIfOutOfBounds(tile.x, tile.y + y))
             {
@@ -379,11 +303,11 @@ public class GameManager : MonoBehaviour
                 else
                     tilesInARow = 0;
             }
-            if (tilesInARow == tilesToWin)
+            if (tilesInARow == inARow)
                 return true;
         }
-        tilesInARow = 0; 
-        for (int yx = -(tilesToWin - 1); yx < (tilesToWin - 1); yx++)
+        tilesInARow = 0;
+        for (int yx = -(inARow - 1); yx < (inARow - 1); yx++)
         {
             if (CheckIfOutOfBounds(tile.x + yx, tile.y + yx))
             {
@@ -392,11 +316,11 @@ public class GameManager : MonoBehaviour
                 else
                     tilesInARow = 0;
             }
-            if (tilesInARow == tilesToWin)
+            if (tilesInARow == inARow)
                 return true;
         }
         tilesInARow = 0;
-        for (int xy = -(tilesToWin-1); xy < (tilesToWin - 1); xy++)
+        for (int xy = -(inARow - 1); xy < (inARow - 1); xy++)
         {
             if (CheckIfOutOfBounds(tile.x - xy, tile.y + xy))
             {
@@ -405,10 +329,87 @@ public class GameManager : MonoBehaviour
                 else
                     tilesInARow = 0;
             }
-            if (tilesInARow == tilesToWin)
+            if (tilesInARow == inARow)
                 return true;
         }
         return false;
+    }
+
+    private int DealWithEqualValueCase(Dictionary<TileData, int> map)
+    {
+        int value = 0;
+        bool sameValue = true;
+        bool firstValue = true;
+        foreach (TileData d in map.Keys)
+        {
+            if (firstValue)
+            {
+                value = map[d];
+                firstValue = false;
+                continue;
+            }
+            else
+            {
+                if (value == map[d])
+                    continue;
+            }
+            sameValue = false;
+        }
+        if (sameValue)
+        {
+            Debug.Log("All Values are the same");
+            if (EarlyGame())
+                return 3;
+            else
+                return Random.Range(0, map.Count);
+        }
+        return -1;
+    }
+
+    private TileData PrioritizeCentralPosition(Dictionary<TileData, int> map)
+    {
+        TileData data = new TileData();
+        List<TileData> dataList = new List<TileData>();
+        int largestNum = int.MinValue;
+        foreach (TileData d in map.Keys) //hitta störst
+        {
+            if (map[d] > largestNum)
+            {
+                largestNum = map[d];
+                data = d;
+            }
+        }
+        foreach (TileData d in map.Keys)//add all equal values
+        {
+            if (map[data] == map[d])
+                dataList.Add(d);
+        }
+        Debug.Log(dataList.Count + " positions have the same value");
+        foreach (TileData d in dataList)//pick the most central one
+        {
+            if (d.x == 3)
+            {
+                data = d;
+                break;
+            }
+            else if (d.x == 2 || d.x == 4)
+            {
+                data = d;
+                continue;
+            }
+            else if (d.x == 1 || d.x == 5)
+            {
+                data = d;
+                continue;
+            }
+            else
+            {
+                data = d;
+                continue;
+            }
+        }
+
+        return data;
     }
 
     private void GameOver()
@@ -422,46 +423,15 @@ public class GameManager : MonoBehaviour
             Debug.Log("AI Revolution is starting");
     }
 
-    private bool CheckIfOutOfBounds(int x, int y) 
+    private bool CheckIfOutOfBounds(int x, int y)
     {
         return !(x < 0 || x >= columns || y < 0 || y >= rows);
-    }
-
-    private void GetBoardWithAFewChanges()
-    {
-        Tile[,] clone = new Tile[columns, rows];
-        Tile tile;
-        //Tile[,] clone = board.Clone() as Tile[,];
-
-        for (int x = 0; x < columns; x++)
-        {
-            for (int y = 0; y < rows; y++)
-            {
-                tile = new Tile();
-                tile.CopyValuesFrom(board[x, y]);
-                clone[x, y] = tile;
-            }
-        }
-
-        clone[3, 3].data.type = TileType.player;
-
-        PrintBoard(clone);
-        PrintBoard(board);
-    }
-
-    private void GetBoardDataWithAFewChanges()
-    {
-        TileData[,] copy = GetDeepCopyOfBoard(GetBoardData());
-        copy[3, 3].type = TileType.player;
-
-        PrintBoard(copy);//This is done to see whether the copy changes the original
-        PrintBoard(board);
     }
 
     private void PrintBoard(Tile[,] b)
     {
         Debug.Log("------Board------");
-        for (int x = rows - 1; x > - 1; x--)
+        for (int x = rows - 1; x > -1; x--)
         {
             string wholeRow = "";
             for (int y = 0; y < columns; y++)
@@ -484,6 +454,11 @@ public class GameManager : MonoBehaviour
             }
             Debug.Log(wholeRow);
         }
+    }
+
+    private bool EarlyGame()
+    {
+        return turn < 6;
     }
 
     public bool IsPlayerTurn()

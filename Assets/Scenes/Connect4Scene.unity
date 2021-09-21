@@ -222,7 +222,8 @@ MonoBehaviour:
   columns: 7
   rows: 6
   tilesToWin: 4
-  depth: 3
+  depth: 4
+  tilePlacementDelay: 0.7
   aIGoesFirst: 0
 --- !u!4 &34280642
 Transform:
