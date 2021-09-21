@@ -65,6 +65,10 @@ public class GameManager : MonoBehaviour
             Debug.Log("Pressed on a full row, turn still yours");
             return;
         }
+
+        if (type == TileType.player)
+            Sound.Instance.AudioClips.PlayPlayerSound(Sound.Instance.Audio);
+
         for (int y = 0; y < rows; y++)
         { //turns the first available tile in the given column to the type given
             if (board[col, y].data.type != TileType.empty)
