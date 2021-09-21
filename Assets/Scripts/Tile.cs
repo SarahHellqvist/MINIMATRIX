@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public struct TileData
 {
@@ -20,7 +21,8 @@ public class Tile : MonoBehaviour
     [SerializeField]
     private Sprite playerSprite, aISprite;
     public TileData data;
-   
+    [SerializeField]
+    private Text text;
 
     public bool IsUseable { get; set; }
     
@@ -110,6 +112,16 @@ public class Tile : MonoBehaviour
     {
         Debug.Log("Tile at cords: x=" + data.x + "; y=" + data.y + " is of type: " + ToString());
         //textMesh.text = x + "; " + y;
+    }
+
+    public void ClearDebugText()
+    {
+        text.text = "";
+    }
+
+    public void SetDebugText(int value)
+    {
+        text.text = value.ToString();
     }
 
     public new string ToString()
