@@ -306,3 +306,4 @@ MonoBehaviour:
   playerWinSound: {fileID: 8300000, guid: cdefa42aafe1b7d488fddf875d2f8b92, type: 3}
   aIWinSound: {fileID: 8300000, guid: debeee3b9d94a9848ac44f0095a01d27, type: 3}
   restartSound: {fileID: 8300000, guid: 0c9cddde748af5041990eb03283ba0da, type: 3}
+  buttonSound: {fileID: 8300000, guid: 0c9cddde748af5041990eb03283ba0da, type: 3}
