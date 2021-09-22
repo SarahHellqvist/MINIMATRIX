@@ -10,7 +10,11 @@ public class AudioClips : MonoBehaviour
     [SerializeField]
     AudioClip aITileSound;
     [SerializeField]
-    AudioClip PlayerWinSound;
+    AudioClip playerWinSound;
+    [SerializeField]
+    AudioClip aIWinSound;
+    [SerializeField]
+    AudioClip restartSound;
 
 
     private void Awake()
@@ -31,6 +35,17 @@ public class AudioClips : MonoBehaviour
 
     public void PlayPlayerWinSound()
     {
-        audioSource.PlayOneShot(PlayerWinSound);
+        audioSource.PlayOneShot(playerWinSound);
     }
+
+    public void PlayAIWinSound()
+    {
+        audioSource.PlayOneShot(aIWinSound);
+    }
+
+    public void PlayRestartSound()
+    {
+        audioSource.PlayOneShot(restartSound);
+    }
+
 }

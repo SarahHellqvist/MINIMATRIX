@@ -23,7 +23,10 @@ public class GameManager : MonoBehaviour
 
     private Tile[,] board;
 
+    [Header("Debugging")]
     private bool debugMode = false;
+    private int iterations;
+    private float time;
 
     void Awake()
     {
@@ -86,15 +89,23 @@ public class GameManager : MonoBehaviour
         }
         turn++;
         if (!IsPlayerTurn())
-            AITurn();
+            StartCoroutine(AITurnDelay());
+    }
+
+    IEnumerator AITurnDelay()
+    {
+        yield return new WaitForSeconds(0.1f);
+        AITurn();
     }
 
     private void AITurn()
     {
+        iterations = 0;
         if (debugMode)
             ClearDebugValues();
-
+        time = Time.time;
         Dictionary<TileData, int> map = MiniMaxMap();
+        Debug.Log(iterations);
 
         if (debugMode)
             DebugTileValues(map);
@@ -113,7 +124,7 @@ public class GameManager : MonoBehaviour
 
         foreach (TileData d in map.Keys)
         {
-            Debug.Log(d.x + ", " + d.y + " value: " + map[d]);
+            //Debug.Log(d.x + ", " + d.y + " value: " + map[d]);
             if (map[d] > colValue)
             {
                 colValue = map[d];
@@ -151,6 +162,7 @@ public class GameManager : MonoBehaviour
 
     private int MiniMax(TileData[,] boardParent, int depth, int alpha, int beta, bool maximizingPlayer)
     {
+        iterations++;
         //Debug.Log("Ran minimax");
         if (depth == 0 || CheckWin(boardParent, tilesToWin))
         {
@@ -199,6 +211,7 @@ public class GameManager : MonoBehaviour
             int eval = MiniMax(boardChild, depth - 1, int.MinValue, int.MaxValue, false);
             map.Add(tile, eval);
         }
+        Debug.Log(Time.deltaTime);
         return map;
     }
 
@@ -393,7 +406,7 @@ public class GameManager : MonoBehaviour
             if (map[data] == map[d])
                 dataList.Add(d);
         }
-        Debug.Log(dataList.Count + " positions have the same value");
+        //Debug.Log(dataList.Count + " positions have the same value");
         foreach (TileData d in dataList)//pick the most central one
         {
             if (d.x == 3)
@@ -432,11 +445,17 @@ public class GameManager : MonoBehaviour
             Sound.Instance.AudioClips.PlayPlayerWinSound();
         }
         else
+        {
             Debug.Log("AI Revolution is starting");
+            Sound.Instance.AudioClips.PlayAIWinSound();
+        }
     }
 
     public void Restart()
     {
+        Sound.Instance.AudioClips.PlayRestartSound();
+        if (debugMode)
+            ClearDebugValues();
         foreach (Tile tile in board)
         {
             turn = 0;

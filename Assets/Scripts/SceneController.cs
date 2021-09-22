@@ -35,4 +35,9 @@ public class SceneController : MonoBehaviour
             Panel.SetActive(false);
         }
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
 }
