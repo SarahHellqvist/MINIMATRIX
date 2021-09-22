@@ -24,7 +24,8 @@ public class GameManager : MonoBehaviour
     private Tile[,] board;
 
     [Header("Debugging")]
-    private bool debugMode = false;
+    [SerializeField]
+    private DebugData debugData;
     private int iterations;
     private float time;
     private float calculationTime;
@@ -32,7 +33,9 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         GenerateBoard();
-    }
+        if (debugData == null)
+            debugData = GetComponent<DebugData>();
+}
 
     private void GenerateBoard()
     {
@@ -102,17 +105,16 @@ public class GameManager : MonoBehaviour
     private void AITurn()
     {
         iterations = 0;
-        if (debugMode)
-            ClearDebugValues();
+
+        ClearDebugValues();
 
         time = Time.realtimeSinceStartup;
         Dictionary<TileData, int> map = MiniMaxMap();
         calculationTime = Time.realtimeSinceStartup - time;
-        Debug.Log(calculationTime);
-        Debug.Log(iterations);
 
-        if (debugMode)
-            DebugTileValues(map);
+        UpdateDebugData(calculationTime, iterations);
+
+        DebugTileValues(map);
 
         TileData data = new TileData();
         int colValue = int.MinValue;
@@ -457,8 +459,8 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Sound.Instance.AudioClips.PlayRestartSound();
-        if (debugMode)
-            ClearDebugValues();
+        ClearDebugValues();
+        UpdateDebugData(0.0f, 0);
         foreach (Tile tile in board)
         {
             turn = 0;
@@ -499,10 +501,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SetTileTextActiveTo(bool b)
+    {
+        foreach (Tile tile in board)
+        {
+            tile.SetTextActiveTo(b);
+        }
+    }
+
     public void ActivateDebugMode(bool b)
     {
-        Debug.Log("Debug = " + b);
-        debugMode = b;
+        //Debug.Log("Debug = " + b);
+        SetTileTextActiveTo(b);
+        debugData.SetActiveTo(b);
+    }
+
+    private void UpdateDebugData(float calculationTime, int iterations)
+    {
+        debugData.UpdateData(calculationTime, iterations);
     }
 
     public void UpdateDifficulty(float f)

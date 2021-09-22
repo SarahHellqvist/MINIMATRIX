@@ -22,6 +22,8 @@ public class Tile : MonoBehaviour
     private Sprite emptySprite, playerSprite, aISprite;
     public TileData data;
     [SerializeField]
+    private GameObject textGameObject;
+    [SerializeField]
     private Text text;
 
     public bool IsUseable { get; set; }
@@ -50,6 +52,11 @@ public class Tile : MonoBehaviour
         data.type = TileType.empty;
         sr.sprite = emptySprite;
         IsUseable = true;
+    }
+
+    public void SetTextActiveTo(bool b)
+    {
+        textGameObject.SetActive(b);
     }
 
     public void TurnIntoPlayerTile()
