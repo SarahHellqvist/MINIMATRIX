@@ -15,7 +15,8 @@ public class AudioClips : MonoBehaviour
     AudioClip aIWinSound;
     [SerializeField]
     AudioClip restartSound;
-
+    [SerializeField]
+    AudioClip buttonSound;
 
     private void Awake()
     {
@@ -47,5 +48,8 @@ public class AudioClips : MonoBehaviour
     {
         audioSource.PlayOneShot(restartSound);
     }
-
+    public void PlayButtonSound()
+    {
+        audioSource.PlayOneShot(buttonSound);
+    }
 }
