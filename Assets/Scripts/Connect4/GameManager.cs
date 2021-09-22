@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class GameManager : MonoBehaviour
     private int columns, rows;
     [SerializeField]
     private int tilesToWin = 4;
+    [SerializeField]
+    private GameObject GameOverPanel;
+    [SerializeField]
+    private Text WinnerText;
 
     [Header("AI Settings"), SerializeField,
         Range(1, 8), Tooltip("Difficulty setting")]
@@ -32,10 +37,11 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        GameOverPanel.SetActive(false);
         GenerateBoard();
         if (debugData == null)
             debugData = GetComponent<DebugData>();
-}
+    }
 
     private void GenerateBoard()
     {
@@ -441,6 +447,7 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
+        bool playerWon = false;
         foreach (Tile tile in board)
             tile.IsUseable = false;
         //Debug.Log(StaticEvaluationOfBoard(board));
@@ -448,13 +455,36 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Player Won!");
             Sound.Instance.AudioClips.PlayPlayerWinSound();
+            playerWon = true;
         }
         else
         {
             Debug.Log("AI Revolution is starting");
             Sound.Instance.AudioClips.PlayAIWinSound();
+            playerWon = false;
+        }
+
+        OpenGameOverPanel(playerWon);
+    }
+
+    private void OpenGameOverPanel(bool playerWon)
+    {
+        if (GameOverPanel != null)
+        {
+            GameOverPanel.SetActive(true);
+
+            if(playerWon == true)
+            {
+                WinnerText.text = "You Won!";
+            }
+            else
+            {
+                WinnerText.text = "AI Won!";
+            }
+
         }
     }
+
 
     public void Restart()
     {
