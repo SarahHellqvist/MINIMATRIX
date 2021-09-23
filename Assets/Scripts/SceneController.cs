@@ -8,16 +8,19 @@ public class SceneController : MonoBehaviour
 
     public void StartMenu()
     {
+        Sound.Instance.PlayMenuSong();
         SceneManager.LoadScene(1);
     }
 
     public void ConnectGame()
     {
+        Sound.Instance.PlayConnectFourSong();
         SceneManager.LoadScene(2);
     }
 
     public void ChessGame()
     {
+        Sound.Instance.PlayChessSong();
         SceneManager.LoadScene(3);
     }
 
