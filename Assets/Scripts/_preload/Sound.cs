@@ -9,7 +9,9 @@ public class Sound : MonoBehaviour
     private float musicVolume;
 
     [SerializeField]
-    private new AudioSource audio;
+    private AudioSource fXSource;
+    [SerializeField]
+    private AudioSource musicSource;
     [SerializeField]
     private AudioClips ac;
 
@@ -19,24 +21,31 @@ public class Sound : MonoBehaviour
             Instance = this;
         else
             Debug.Log("Warning: multiple " + this + " in scene!");
-        if (audio == null)
-            audio = GetComponent<AudioSource>();
+        if (fXSource == null)
+            fXSource = GetComponent<AudioSource>();
+        if (musicSource == null)
+            musicSource = GetComponentInChildren<AudioSource>();
         if (ac == null)
             ac = GetComponent<AudioClips>();
-        Instance.GlobalVolume = 0.5f;
-        Instance.EffectsVolume = 1.0f;
-        Instance.MusicVolume = 1.0f;
+        Instance.GlobalVolume = 1.0f;
+        Instance.EffectsVolume = 0.25f;
+        Instance.MusicVolume = 0.25f;
         UpdateMusicVolume();
     }
 
     public void UpdateMusicVolume()
     {
-        audio.volume = MusicVolume;
+        musicSource.volume = MusicVolume;
+    }
+
+    public void UpdateFXVolume()
+    {
+        fXSource.volume = EffectsVolume;
     }
 
     public AudioSource Audio
     {
-        get => audio;
+        get => fXSource;
     }
 
     public float GlobalVolume
