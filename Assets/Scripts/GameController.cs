@@ -21,7 +21,7 @@ public class GameController : Singleton<GameController> {
     private GameObject panel;
     //private CanvasGroup cg;
     [SerializeField]
-    private TextMeshProUGUI textEnd, textButtonChange;
+    private Text textEnd, textButtonChange;
 
     [SerializeField]
     private int queenValue;
