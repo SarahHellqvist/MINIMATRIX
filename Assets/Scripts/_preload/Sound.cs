@@ -15,6 +15,9 @@ public class Sound : MonoBehaviour
     [SerializeField]
     private AudioClips ac;
 
+    [SerializeField]
+    private AudioClip menuSong, c4Song, chessSong;
+
     void Awake()
     {
         if (Instance == null)
@@ -41,6 +44,27 @@ public class Sound : MonoBehaviour
     public void UpdateFXVolume()
     {
         fXSource.volume = EffectsVolume;
+    }
+
+    public void PlayMenuSong()
+    {
+        if (musicSource.isPlaying)
+            musicSource.Stop();
+        musicSource.PlayOneShot(menuSong);
+    }
+
+    public void PlayConnectFourSong()
+    {
+        if (musicSource.isPlaying)
+            musicSource.Stop();
+        musicSource.PlayOneShot(c4Song);
+    }
+
+    public void PlayChessSong()
+    {
+        if (musicSource.isPlaying)
+            musicSource.Stop();
+        musicSource.PlayOneShot(chessSong);
     }
 
     public AudioSource Audio

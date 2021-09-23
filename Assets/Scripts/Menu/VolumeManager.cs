@@ -7,6 +7,13 @@ public class VolumeManager : MonoBehaviour
     public Slider musicVolSlider;
     public Slider fXVolSlider;
 
+    private void Awake()
+    {
+        globalVolSlider.value = Sound.Instance.GlobalVolume;
+        musicVolSlider.value = Sound.Instance.MusicVolumeRaw;
+        fXVolSlider.value = Sound.Instance.EffectsVolumeRaw;
+    }
+
     public void SetGlobalVolume()
     {
         Sound.Instance.GlobalVolume = globalVolSlider.value;
