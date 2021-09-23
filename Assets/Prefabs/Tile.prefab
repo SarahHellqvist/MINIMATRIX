@@ -165,6 +165,8 @@ MonoBehaviour:
   emptySprite: {fileID: 21300000, guid: 432e86e139a26de4e8d798c6d19e93bd, type: 3}
   playerSprite: {fileID: 21300000, guid: 6b6864e1e2353bf4483555e20d4c42a5, type: 3}
   aISprite: {fileID: 21300000, guid: 9a887bfa64c1d2f4eb61c8d7ac4ecae0, type: 3}
+  playerWinSprite: {fileID: 21300000, guid: 3ad06567ec7d70b4584e9cb4cff4a35e, type: 3}
+  aiWinSprite: {fileID: 21300000, guid: 63b1a2e7d1885d64781e55286068aba5, type: 3}
   textGameObject: {fileID: 4066089440181367041}
   text: {fileID: 6479156366837168402}
 --- !u!212 &1564057998158164675
