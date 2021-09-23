@@ -18,7 +18,7 @@ public class DebugData : MonoBehaviour
 
     public void UpdateData(float calcT, int iter)
     {
-        Debug.Log("calc time = " + calcT + ". Iterations: " + iter);
+        //Debug.Log("calc time = " + calcT + ". Iterations: " + iter);
         calcT = (float)Math.Round(calcT, 3);
         iterationText.text = iterString + iter;
         calculationTime.text = calcTString + calcT + "s";

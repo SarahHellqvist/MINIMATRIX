@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
     private int turn;
 
     private Tile[,] board;
+    private List<Tile> tilePlaceOrder;
 
     [Header("Debugging")]
     [SerializeField]
@@ -37,6 +39,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        tilePlaceOrder = new List<Tile>();
         GameOverPanel.SetActive(false);
         GenerateBoard();
         if (debugData == null)
@@ -89,6 +92,7 @@ public class GameManager : MonoBehaviour
             if (board[col, y].data.type != TileType.empty)
                 continue;
             board[col, y].TransformTile(type);
+            tilePlaceOrder.Add(board[col, y]);
             break;
         }
         //PrintBoard(board);
@@ -447,24 +451,32 @@ public class GameManager : MonoBehaviour
 
     private void GameOver()
     {
-        bool playerWon = false;
         foreach (Tile tile in board)
             tile.IsUseable = false;
+
+        HighlightLastPlacedTile(IsPlayerTurn());
+
         //Debug.Log(StaticEvaluationOfBoard(board));
         if (IsPlayerTurn())
         {
             Debug.Log("Player Won!");
             Sound.Instance.AudioClips.PlayPlayerWinSound();
-            playerWon = true;
         }
         else
         {
             Debug.Log("AI Revolution is starting");
             Sound.Instance.AudioClips.PlayAIWinSound();
-            playerWon = false;
         }
 
-        OpenGameOverPanel(playerWon);
+        OpenGameOverPanel(IsPlayerTurn());
+    }
+
+    private void HighlightLastPlacedTile(bool isPlayer)
+    {
+        if (isPlayer)
+            tilePlaceOrder.Last().PlayerGlow();
+        else
+            tilePlaceOrder.Last().AIGlow();
     }
 
     private void OpenGameOverPanel(bool playerWon)
@@ -489,6 +501,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         Sound.Instance.AudioClips.PlayRestartSound();
+        tilePlaceOrder.Clear();
         ClearDebugValues();
         UpdateDebugData(0.0f, 0);
         foreach (Tile tile in board)

@@ -47,6 +47,21 @@ public class Tile : MonoBehaviour
         }
     }
 
+    public void PlayerGlow()
+    {
+        Debug.Log(data.x + ", " + data.y + ", " + data.type);
+        textGameObject.SetActive(true);
+        text.text = "Winning tile";
+
+    }
+
+    public void AIGlow()
+    {
+        Debug.Log(data.x + ", " + data.y + ", " + data.type);
+        textGameObject.SetActive(true);
+        text.text = "AI Winning Tile";
+    }
+
     public void ResetTile()
     {
         data.type = TileType.empty;
