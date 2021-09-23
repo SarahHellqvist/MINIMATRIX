@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7765,7 +7765,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!114 &1736331166
 MonoBehaviour:
@@ -7805,6 +7805,7 @@ MonoBehaviour:
   queenValue: 999
   queenSquareTableValues: {fileID: 11400000, guid: 1f4c58ef2080fac469e5a5b63613b57d, type: 2}
   button: {fileID: 1993808380}
+  removeButton: {fileID: 462846409}
 --- !u!4 &1736331168
 Transform:
   m_ObjectHideFlags: 0
