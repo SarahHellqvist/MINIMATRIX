@@ -3,7 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : MonoBehaviour
 {
-    public GameObject Panel;
+    public GameObject gamePanel;
+    public GameObject settingsPanel;
+
     public void StartMenu()
     {
         SceneManager.LoadScene(1);
@@ -17,22 +19,39 @@ public class SceneController : MonoBehaviour
     public void ChessGame()
     {
         SceneManager.LoadScene(3);
-    }   
+    }
 
-    public void OpenPanel()
+    public void OpenGamePanel()
     {
-        if(Panel != null)
+        if (gamePanel != null)
         {
-            bool isActive = Panel.activeSelf;
-            Panel.SetActive(!isActive);
+            bool isActive = gamePanel.activeSelf;
+            gamePanel.SetActive(!isActive);
         }
     }
 
-    public void ClosePanel()
+    public void OpenSettingsPanel()
     {
-        if (Panel != null)
+        if (settingsPanel != null)
         {
-            Panel.SetActive(false);
+            bool isActive = settingsPanel.activeSelf;
+            settingsPanel.SetActive(!isActive);
+        }
+    }
+
+    public void CloseGamePanel()
+    {
+        if (gamePanel != null)
+        {
+            gamePanel.SetActive(false);
+        }
+    }
+
+    public void CloseSettingsPanel()
+    {
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
         }
     }
 
