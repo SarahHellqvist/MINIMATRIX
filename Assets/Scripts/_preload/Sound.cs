@@ -51,6 +51,7 @@ public class Sound : MonoBehaviour
         if (musicSource.isPlaying)
             musicSource.Stop();
         musicSource.PlayOneShot(menuSong);
+        musicSource.loop = true;
     }
 
     public void PlayConnectFourSong()
@@ -58,6 +59,7 @@ public class Sound : MonoBehaviour
         if (musicSource.isPlaying)
             musicSource.Stop();
         musicSource.PlayOneShot(c4Song);
+        musicSource.loop = true;
     }
 
     public void PlayChessSong()
@@ -65,6 +67,7 @@ public class Sound : MonoBehaviour
         if (musicSource.isPlaying)
             musicSource.Stop();
         musicSource.PlayOneShot(chessSong);
+        musicSource.loop = true;
     }
 
     public AudioSource Audio
