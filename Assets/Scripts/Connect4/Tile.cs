@@ -19,7 +19,7 @@ public class Tile : MonoBehaviour
     private GameManager gm;
     private SpriteRenderer sr;
     [SerializeField]
-    private Sprite emptySprite, playerSprite, aISprite;
+    private Sprite emptySprite, playerSprite, aISprite, playerWinSprite, aiWinSprite;
     public TileData data;
     [SerializeField]
     private GameObject textGameObject;
@@ -49,17 +49,18 @@ public class Tile : MonoBehaviour
 
     public void PlayerGlow()
     {
-        Debug.Log(data.x + ", " + data.y + ", " + data.type);
-        textGameObject.SetActive(true);
-        text.text = "Winning tile";
-
+        //Debug.Log(data.x + ", " + data.y + ", " + data.type);
+        //textGameObject.SetActive(true);
+        //text.text = "Winning tile";
+        sr.sprite = playerWinSprite;
     }
 
     public void AIGlow()
     {
-        Debug.Log(data.x + ", " + data.y + ", " + data.type);
-        textGameObject.SetActive(true);
-        text.text = "AI Winning Tile";
+        //Debug.Log(data.x + ", " + data.y + ", " + data.type);
+        //textGameObject.SetActive(true);
+        //text.text = "AI Winning Tile";
+        sr.sprite = aiWinSprite;
     }
 
     public void ResetTile()
