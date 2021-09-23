@@ -40,12 +40,14 @@ public class GameController : Singleton<GameController> {
     public Button button;
     private bool gameover;
 
-
+    [SerializeField]
+    private GameObject removeButton;
 
 
 
     void Start() {
 
+        removeButton.SetActive(true);
         playerOne = new Player(materialWhite, Player.PlayerType.HUMAN, 7);
         playerTwo = new Player(materialBlack, Player.PlayerType.AI);
         miniMax = new MiniMax();
@@ -65,6 +67,7 @@ public class GameController : Singleton<GameController> {
         EvaluatePlayers();
 
         ChangeGraphicMode();
+        removeButton.SetActive(false);
     }
 
 
